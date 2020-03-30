@@ -1,0 +1,56 @@
+{
+  "env": {
+    "browser": true,
+    "es6": true,
+    "es2017": true
+  },
+  "extends": [
+    "prettier",
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking",
+    "plugin:react/recommended"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "tsconfig.json",
+    "tsconfigRootDir": ".",
+    "createDefaultProgram": true
+  },
+  "plugins": ["@typescript-eslint", "prettier", "react"],
+  "rules": {
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "jsx-quotes": [
+      1,
+      "prefer-double"
+    ],
+    "@typescript-eslint/interface-name-prefix": 0,
+    "@typescript-eslint/no-misused-promises": 0,
+    "@typescript-eslint/prefer-regexp-exec": 0,
+    "no-useless-escape": 0,
+    "react/prop-types": 0,
+    "react/display-name": 0,
+    "react/jsx-uses-react": 1,
+    "@typescript-eslint/no-explicit-any": 2,
+    "no-magic-numbers": 0,
+    "@typescript-eslint/no-magic-numbers": [1, {
+      "ignore": [-1, 0, 1, 2],
+      "ignoreEnums": true,
+      "ignoreReadonlyClassProperties": true
+    }],
+    "no-console": 2,
+    "no-debugger": 2,
+    "indent": [0, 2],
+    "max-classes-per-file": [2, 2],
+    "no-empty": 1,
+    "no-duplicate-imports": 2,
+    "prefer-const": 2,
+    "no-bitwise": 2,
+    "no-eval": 2,
+    "jsx-boolean-value": 0,
+    "jsx-no-lambda": 0,
+    "radix": 0,
+    "curly": 0
+  }
+}
