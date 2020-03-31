@@ -17,22 +17,31 @@ export interface IInfoCity {
 const App: FC = () => {
   const [infoCity, setInfoCity] = useState({});
   const [loading, setUploading] = useState(false);
+  const [error, setError] = useState(false);
+
+  const onError = () => {
+    setError(true);
+    setUploading(false);
+  };
+
+  const onInfoLoaded = (body: {}) => {
+    setInfoCity(body);
+    setUploading(false);
+    setError(false);
+  };
 
   const getDate = (cityName: string): void => {
     setUploading(true);
     getDateWeather(cityName)
-      .then(body => {
-        setInfoCity(body);
-        setUploading(false);
-      })
-      .catch(err => console.log(err));
+      .then(body => onInfoLoaded(body))
+      .catch(() => onError());
   };
 
   return (
     <>
       <Wrapped>
         <SearchPanel getDate={getDate} />
-        <Content infoCity={infoCity} loading={loading} />
+        <Content infoCity={infoCity} loading={loading} error={error} />
       </Wrapped>
     </>
   );

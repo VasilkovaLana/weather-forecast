@@ -21,9 +21,10 @@ export const SearchPanel: FC<ISearchPanel> = ({ getDate }) => {
     <form onSubmit={onSubmit}>
       <input
         type="text"
-        placeholder="введите город или страну"
+        placeholder="введите город"
         value={value}
         onChange={onValueChange}
+        autoFocus={true}
       />
       <button type="submit">Найти</button>
     </form>

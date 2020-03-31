@@ -41,8 +41,3 @@ interface ItransformDateWeather {
   };
   name: string;
 }
-
-// getResource(`${ApiBase}лондон${ApiKey}`);
-// getResource(
-//   'https://api.openweathermap.org/data/2.5/weather?q=лондон&appid=0f49363de5af37c512e1a84dd3bab4dd'
-// );

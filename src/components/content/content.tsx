@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
 import { Spinner } from '../spinner/spinner';
+import { ErrorIndicator } from '../error-indicator/error-indicator';
 
 interface IContentView {
   infoCity: { [key: string]: number | string };
@@ -7,14 +8,19 @@ interface IContentView {
 
 interface IContent extends IContentView {
   loading: boolean;
+  error: boolean;
 }
 
-export const Content: FC<IContent> = ({ infoCity, loading }) => {
+export const Content: FC<IContent> = ({ infoCity, loading, error }) => {
+  const hasData = !(loading || error);
+
   const spinner = loading ? <Spinner /> : null;
-  const content = !loading ? <ContentView infoCity={infoCity} /> : null;
+  const errorMessage = error ? <ErrorIndicator /> : null;
+  const content = hasData ? <ContentView infoCity={infoCity} /> : null;
 
   return (
     <div>
+      {errorMessage}
       {spinner}
       {content}
     </div>
