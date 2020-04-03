@@ -19,11 +19,13 @@ export const getDateWeather = async (city: string) => {
 };
 
 const transformDateWeather = (date: ItransformDateWeather) => {
+  console.log(date);
+
   return {
     description: date.weather[0].description,
-    windSpeed: date.wind.speed,
-    temperature: date.main.temp,
-    feelsLike: date.main.feels_like,
+    windSpeed: [+date.wind.speed.toFixed(1)],
+    temperature: [Math.round(date.main.temp)],
+    feelsLike: [Math.round(date.main.feels_like)],
     pressure: date.main.pressure,
     humidity: date.main.humidity,
     name: date.name,
