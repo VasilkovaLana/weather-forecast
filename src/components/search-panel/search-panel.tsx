@@ -48,10 +48,6 @@ const Form = styled.form`
   }
 `;
 
-interface ISearchPanel {
-  getDate: (value: string) => void;
-}
-
 export const SearchPanel: FC<ISearchPanel> = ({ getDate }) => {
   const [value, setValue] = useState('');
 
@@ -78,3 +74,7 @@ export const SearchPanel: FC<ISearchPanel> = ({ getDate }) => {
     </Form>
   );
 };
+
+interface ISearchPanel {
+  getDate: (value: string) => void;
+}

@@ -1,12 +1,12 @@
 const ApiBase = 'https://api.openweathermap.org/data/2.5/weather?q=';
-const ApiKey = '&units=metric&appid=0f49363de5af37c512e1a84dd3bab4dd';
+const ApiKey = '&lang=ru&units=metric&appid=0f49363de5af37c512e1a84dd3bab4dd';
 
 const getResource = async (url: string) => {
-  const response = await fetch(url);
+  const response: any = await fetch(url);
   const body = await response.json();
 
   if (!response.ok) {
-    throw new Error(`Whoops! ${response.status}`);
+    throw new Error(`Whoops, ${body.message}`);
   }
 
   return body;
@@ -22,6 +22,7 @@ const transformDateWeather = (date: ItransformDateWeather) => {
   console.log(date);
 
   return {
+    icon: date.weather[0].icon,
     description: date.weather[0].description,
     windSpeed: [+date.wind.speed.toFixed(1)],
     temperature: [Math.round(date.main.temp)],
@@ -33,7 +34,7 @@ const transformDateWeather = (date: ItransformDateWeather) => {
 };
 
 interface ItransformDateWeather {
-  weather: { description: string }[];
+  weather: { description: string; icon: string }[];
   wind: { speed: number };
   main: {
     temp: number;

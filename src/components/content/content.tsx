@@ -1,7 +1,6 @@
 import React, { FC } from 'react';
 import { Spinner } from '../spinner/spinner';
 import { ErrorIndicator } from '../error-indicator/error-indicator';
-import sun from './img/sunny.svg';
 import winter from './img/winter.svg';
 import airHumidity from './img/humidity.svg';
 import airPressure from './img/pressure.svg';
@@ -14,17 +13,23 @@ const Img = styled.img`
   height: 100px;
 `;
 
-const Temperature = styled.p`
+const WeatherDescription = styled.p`
   grid-column: 2/3;
   justify-self: center;
-  font-size: 37px;
+  text-align: center;
+  font-size: 25px;
   margin: 0;
   color: white;
+`;
+
+const Temperature = styled(WeatherDescription)`
+  font-size: 37px;
 `;
 
 const WeatherItem = styled.div`
   grid-column: 2/3;
   display: grid;
+  align-items: center;
   grid-template-columns: 1fr 2fr;
   border-bottom: 4px solid white;
   img {
@@ -36,25 +41,21 @@ const WeatherItem = styled.div`
   }
 `;
 
-interface IContentView {
-  infoCity: { [key: string]: number | string };
-}
-
-interface IContent extends IContentView {
-  loading: boolean;
-  error: boolean;
-}
-
-export const Content: FC<IContent> = ({ infoCity, loading, error }) => {
+export const Content: FC<IContent> = ({
+  infoCity,
+  loading,
+  error,
+  errorMessage,
+}) => {
   const hasData = !(loading || error);
 
   const spinner = loading ? <Spinner /> : null;
-  const errorMessage = error ? <ErrorIndicator /> : null;
+  const Message = error ? <ErrorIndicator errorMessage={errorMessage} /> : null;
   const content = hasData ? <ContentView infoCity={infoCity} /> : null;
 
   return (
     <>
-      {errorMessage}
+      {Message}
       {spinner}
       {content}
     </>
@@ -63,6 +64,7 @@ export const Content: FC<IContent> = ({ infoCity, loading, error }) => {
 
 const ContentView: FC<IContentView> = ({ infoCity }) => {
   const {
+    icon,
     windSpeed,
     temperature,
     feelsLike,
@@ -72,12 +74,16 @@ const ContentView: FC<IContentView> = ({ infoCity }) => {
     name,
   } = infoCity;
 
-  if (!Object.keys(infoCity).length) return <div>погода огонь</div>;
+  if (!Object.keys(infoCity).length) return null;
 
   return (
     <>
-      <Img alt="description" src={sun} />
-      <Temperature> {temperature} °</Temperature>
+      <Img
+        alt="description"
+        src={`http://openweathermap.org/img/wn/${icon}@2x.png`}
+      />
+      <WeatherDescription>{description}</WeatherDescription>
+      <Temperature> {temperature} °C</Temperature>
       <WeatherItem>
         <img alt="pressure" src={airPressure} />
         <p>{pressure} мм рт. ст.</p>
@@ -93,3 +99,13 @@ const ContentView: FC<IContentView> = ({ infoCity }) => {
     </>
   );
 };
+
+interface IContentView {
+  infoCity: { [key: string]: number | string };
+}
+
+interface IContent extends IContentView {
+  loading: boolean;
+  error: boolean;
+  errorMessage?: string | null;
+}
