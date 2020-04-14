@@ -38,6 +38,7 @@
     ]
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.149",
     "react-hot-loader": "^4.12.20",
     "styled-components": "^5.0.1"
   }

@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useState, useEffect } from 'react';
 import { getDateWeather } from '../../services/weather-service';
 import { SearchPanel } from '../search-panel/search-panel';
 import { Content } from '../content/content';

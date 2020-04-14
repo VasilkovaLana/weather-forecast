@@ -1,5 +1,8 @@
-const ApiBase = 'https://api.openweathermap.org/data/2.5/weather?q=';
-const ApiKey = '&lang=ru&units=metric&appid=0f49363de5af37c512e1a84dd3bab4dd';
+const WeatherBase = 'https://api.openweathermap.org/data/2.5/weather?q=';
+const WeatherKey =
+  '&lang=ru&units=metric&appid=0f49363de5af37c512e1a84dd3bab4dd';
+const ListCitiesBase = 'http://autocomplete.travelpayouts.com/places2?term=';
+const QueryOption = '&locale=ru&types[]=city';
 
 const getResource = async (url: string) => {
   const response: any = await fetch(url);
@@ -13,14 +16,19 @@ const getResource = async (url: string) => {
 };
 
 export const getDateWeather = async (city: string) => {
-  const result = await getResource(`${ApiBase}${city}${ApiKey}`);
+  const result = await getResource(`${WeatherBase}${city}${WeatherKey}`);
 
   return transformDateWeather(result);
 };
 
-const transformDateWeather = (date: ItransformDateWeather) => {
-  console.log(date);
+export const getDateListCities = async (searchText: string) => {
+  const result = await getResource(
+    `${ListCitiesBase}${searchText}${QueryOption}`
+  );
+  return result;
+};
 
+const transformDateWeather = (date: ItransformDateWeather) => {
   return {
     icon: date.weather[0].icon,
     description: date.weather[0].description,
