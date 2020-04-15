@@ -1,10 +1,10 @@
-import React, { FC, useState, useEffect } from 'react';
+import React, { FC, useState } from 'react';
 import { getDateWeather } from '../../services/weather-service';
 import { SearchPanel } from '../search-panel/search-panel';
 import { Content } from '../content/content';
 
 import styled from 'styled-components';
-import mountain from './img/mountain.png';
+import sky from './img/sky.png';
 
 const Wrapper = styled.main`
   display: grid;
@@ -22,7 +22,7 @@ const Wrapper = styled.main`
     left: 0;
     width: 100%;
     height: 100%;
-    background: url(${mountain}) no-repeat;
+    background: url(${sky}) no-repeat;
     background-size: cover;
     filter: blur(8px);
     z-index: -1;

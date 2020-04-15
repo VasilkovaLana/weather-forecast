@@ -1,4 +1,11 @@
-import React, { useState, ChangeEvent, FC, FormEvent, useRef } from 'react';
+import React, {
+  useState,
+  ChangeEvent,
+  FC,
+  FormEvent,
+  useRef,
+  useEffect,
+} from 'react';
 import { debounce } from 'lodash';
 import { getDateListCities } from '../../services/weather-service';
 
@@ -65,7 +72,6 @@ const AutoContainer = styled.div`
   top: 34px;
   width: -webkit-fill-available;
   grid-column: 1/4;
-  padding-left: 12px;
   background: #eceef2;
   color: #9ba4b6;
   font-weight: 400;
@@ -77,12 +83,23 @@ const AutoContainer = styled.div`
 const Option = styled.p`
   cursor: pointer;
   font-family: Arial, sans-serif;
+  padding: 9px 0 12px 9px;
+  margin: 0;
+  &:hover {
+    background: #cbd9f5;
+  }
+  &:focus {
+    background: #cbd9f5;
+    outline: none;
+  }
 `;
 
 export const SearchPanel: FC<ISearchPanel> = ({ getDate }) => {
   const [display, setDisplay] = useState(false);
+  const [submit, setSubmit] = useState(false);
   const [options, setOptions] = useState([]);
   const [search, setSearch] = useState('');
+  const focusTextInput = useRef<HTMLInputElement>(null);
 
   const MaxLengthList = 5;
 
@@ -113,17 +130,38 @@ export const SearchPanel: FC<ISearchPanel> = ({ getDate }) => {
     return setOptions(cities);
   };
 
-  const setCity = (city: string) => {
-    setSearch(city);
+  useEffect(() => {
+    focusTextInput.current!.select();
     setDisplay(false);
+  }, [submit]);
+
+  const setCity = (city: string) => {
+    getDate(city);
+    setSearch(city);
+    setSubmit(!submit);
   };
 
   const onSubmit = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
     getDate(search.trim());
-    setSearch('');
+    focusTextInput.current!.select();
     setDisplay(false);
   };
+
+  const handleKeyPress = (event: any, city: string) => {
+    if (event.key === 'Enter') setCity(city);
+  };
+
+  // const handleKeyDown = (e: any) => {
+  //   console.log(e.key);
+  //   if(e.key === 'ArrowDown') {
+
+  //   }
+
+  //   if(e.key === 'ArrowUp'){
+
+  //   }
+  // }; TODO
 
   return (
     <Form onSubmit={onSubmit}>
@@ -133,17 +171,19 @@ export const SearchPanel: FC<ISearchPanel> = ({ getDate }) => {
         value={search}
         onChange={onValueChange}
         autoFocus={true}
+        ref={focusTextInput}
       />
-      <SearchButton type="submit" />
+      <SearchButton type="submit" tabIndex={-1} />
       {display && (
         <AutoContainer>
           {options.map((item: any, index) => {
             return (
               <Option
-                className="option"
                 key={index}
                 onClick={() => setCity(item)}
+                onFocus={() => setSearch(item)}
                 tabIndex={0}
+                onKeyPress={(e) => handleKeyPress(e, item)}
               >
                 {item}
               </Option>
