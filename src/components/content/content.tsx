@@ -67,11 +67,9 @@ const ContentView: FC<IContentView> = ({ infoCity }) => {
     icon,
     windSpeed,
     temperature,
-    feelsLike,
     description,
     pressure,
     humidity,
-    name,
   } = infoCity;
 
   if (!Object.keys(infoCity).length) return null;

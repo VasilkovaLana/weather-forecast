@@ -33,9 +33,9 @@ const App: FC = () => {
   const [infoCity, setInfoCity] = useState({});
   const [loading, setUploading] = useState(false);
   const [error, setError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState('');
 
-  const onError = (error: any) => {
+  const onError = (error: { message: string }) => {
     setErrorMessage(error.message);
     setError(true);
     setUploading(false);

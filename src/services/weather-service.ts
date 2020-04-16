@@ -4,8 +4,10 @@ const WeatherKey =
 const ListCitiesBase = 'http://autocomplete.travelpayouts.com/places2?term=';
 const QueryOption = '&locale=ru&types[]=city';
 
+const MaxLengthList = 5;
+
 const getResource = async (url: string) => {
-  const response: any = await fetch(url);
+  const response = await fetch(url);
   const body = await response.json();
 
   if (!response.ok) {
@@ -25,7 +27,11 @@ export const getDateListCities = async (searchText: string) => {
   const result = await getResource(
     `${ListCitiesBase}${searchText}${QueryOption}`
   );
-  return result;
+  return transfoemDateListCities(result);
+};
+
+const transfoemDateListCities = (date: ITransfoemDateListCities[]) => {
+  return date.slice(0, MaxLengthList).map((item) => item.name);
 };
 
 const transformDateWeather = (date: ItransformDateWeather) => {
@@ -40,6 +46,10 @@ const transformDateWeather = (date: ItransformDateWeather) => {
     name: date.name,
   };
 };
+
+interface ITransfoemDateListCities {
+  name: string;
+}
 
 interface ItransformDateWeather {
   weather: { description: string; icon: string }[];

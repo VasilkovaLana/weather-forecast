@@ -5,6 +5,7 @@ import React, {
   FormEvent,
   useRef,
   useEffect,
+  KeyboardEvent,
 } from 'react';
 import { debounce } from 'lodash';
 import { getDateListCities } from '../../services/weather-service';
@@ -80,38 +81,35 @@ const AutoContainer = styled.div`
   animation: 0.5s ${fadeIn} 0.3s both;
 `;
 
-const Option = styled.p`
+const Option = styled.p<{ active: boolean }>`
   cursor: pointer;
   font-family: Arial, sans-serif;
   padding: 9px 0 12px 9px;
   margin: 0;
+  background: ${(props) => (props.active ? '#cbd9f5' : '')};
   &:hover {
     background: #cbd9f5;
-  }
-  &:focus {
-    background: #cbd9f5;
-    outline: none;
   }
 `;
 
 export const SearchPanel: FC<ISearchPanel> = ({ getDate }) => {
   const [display, setDisplay] = useState(false);
   const [submit, setSubmit] = useState(false);
-  const [options, setOptions] = useState([]);
+  const [options, setOptions] = useState(['']);
   const [search, setSearch] = useState('');
+  let [count, setCount] = useState(0);
   const focusTextInput = useRef<HTMLInputElement>(null);
-
-  const MaxLengthList = 5;
 
   const delayDebounce = useRef(
     debounce((searchText: string) => {
       if (searchText.trim().length === 0) {
         setDisplay(false);
+        setCount(0);
         return;
       }
 
       getDateListCities(searchText)
-        .then((body) => onOptions(body))
+        .then((body) => setOptions(body))
         .catch((err) => console.log(err));
     }, 500)
   ).current;
@@ -120,14 +118,6 @@ export const SearchPanel: FC<ISearchPanel> = ({ getDate }) => {
     delayDebounce(e.target.value);
     setSearch(e.target.value);
     setDisplay(true);
-  };
-
-  const onOptions = (listCities: any) => {
-    const cities = listCities
-      .slice(0, MaxLengthList)
-      .map((item: { name: string }) => item.name);
-
-    return setOptions(cities);
   };
 
   useEffect(() => {
@@ -146,22 +136,21 @@ export const SearchPanel: FC<ISearchPanel> = ({ getDate }) => {
     getDate(search.trim());
     focusTextInput.current!.select();
     setDisplay(false);
+    setCount(0);
   };
 
-  const handleKeyPress = (event: any, city: string) => {
-    if (event.key === 'Enter') setCity(city);
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (display && e.key === 'ArrowDown' && count < options.length - 1) {
+      e.preventDefault();
+      setCount(++count);
+      setSearch(options[count]);
+    }
+    if (display && e.key === 'ArrowUp' && count > 0) {
+      e.preventDefault();
+      setCount(--count);
+      setSearch(options[count]);
+    }
   };
-
-  // const handleKeyDown = (e: any) => {
-  //   console.log(e.key);
-  //   if(e.key === 'ArrowDown') {
-
-  //   }
-
-  //   if(e.key === 'ArrowUp'){
-
-  //   }
-  // }; TODO
 
   return (
     <Form onSubmit={onSubmit}>
@@ -172,18 +161,17 @@ export const SearchPanel: FC<ISearchPanel> = ({ getDate }) => {
         onChange={onValueChange}
         autoFocus={true}
         ref={focusTextInput}
+        onKeyDown={handleKeyDown}
       />
-      <SearchButton type="submit" tabIndex={-1} />
+      <SearchButton type="submit" />
       {display && (
         <AutoContainer>
-          {options.map((item: any, index) => {
+          {options.map((item, index) => {
             return (
               <Option
+                active={index === count}
                 key={index}
                 onClick={() => setCity(item)}
-                onFocus={() => setSearch(item)}
-                tabIndex={0}
-                onKeyPress={(e) => handleKeyPress(e, item)}
               >
                 {item}
               </Option>
