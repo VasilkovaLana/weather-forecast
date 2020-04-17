@@ -111,13 +111,17 @@ export const SearchPanel: FC<ISearchPanel> = ({ getDate }) => {
       getDateListCities(searchText)
         .then((body) => setOptions(body))
         .catch((err) => console.log(err));
+
+      setDisplay(true);
     }, 500)
   ).current;
 
   const onValueChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    delayDebounce(e.target.value);
-    setSearch(e.target.value);
-    setDisplay(true);
+    const pattern = /^[a-zA-Zа-яА-яёЁ\s-]*$/;
+    if (pattern.test(e.target.value)) {
+      delayDebounce(e.target.value);
+      setSearch(e.target.value);
+    }
   };
 
   useEffect(() => {
