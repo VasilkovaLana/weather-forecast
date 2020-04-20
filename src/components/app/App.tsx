@@ -1,12 +1,13 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useState, useEffect } from 'react';
 import { getDateWeather } from '../../services/weather-service';
 import { SearchPanel } from '../search-panel/search-panel';
 import { Content } from '../content/content';
 
 import styled from 'styled-components';
 import sky from './img/sky.png';
+import cloudDark from './img/cloud-dark.svg';
 
-const Wrapper = styled.main`
+const Wrapper = styled.main<{ beginin: boolean }>`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   grid-gap: 1em;
@@ -14,6 +15,8 @@ const Wrapper = styled.main`
   height: 578px;
   width: 794px;
   position: relative;
+  background: url(${(props) => (props.beginin ? cloudDark : '')}) no-repeat;
+  background-size: cover;
 
   &::before {
     content: '';
@@ -34,6 +37,18 @@ const App: FC = () => {
   const [loading, setUploading] = useState(false);
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  let [beginin, setBeginin] = useState(true);
+
+  useEffect(() => {
+    const lastCity: any = localStorage.getItem('city');
+
+    if (!lastCity) return;
+    setBeginin(false);
+
+    getDateWeather(lastCity)
+      .then((body) => onInfoLoaded(body))
+      .catch((error) => onError(error));
+  }, []);
 
   const onError = (error: { message: string }) => {
     setErrorMessage(error.message);
@@ -50,13 +65,17 @@ const App: FC = () => {
   const getDate = (cityName: string): void => {
     if (!cityName) return;
     setUploading(true);
+
+    localStorage.setItem('city', cityName);
+    setBeginin(false);
+
     getDateWeather(cityName)
       .then((body) => onInfoLoaded(body))
       .catch((error) => onError(error));
   };
 
   return (
-    <Wrapper>
+    <Wrapper beginin={beginin}>
       <SearchPanel getDate={getDate} />
       <Content
         infoCity={infoCity}

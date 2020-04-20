@@ -87,16 +87,13 @@ const Option = styled.p<{ active: boolean }>`
   padding: 9px 0 12px 9px;
   margin: 0;
   background: ${(props) => (props.active ? '#cbd9f5' : '')};
-  &:hover {
-    background: #cbd9f5;
-  }
 `;
 
 export const SearchPanel: FC<ISearchPanel> = ({ getDate }) => {
   const [display, setDisplay] = useState(false);
   const [submit, setSubmit] = useState(false);
   const [options, setOptions] = useState(['']);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState(localStorage.getItem('city') || '');
   let [count, setCount] = useState(0);
   const focusTextInput = useRef<HTMLInputElement>(null);
 
@@ -156,6 +153,10 @@ export const SearchPanel: FC<ISearchPanel> = ({ getDate }) => {
     }
   };
 
+  const handleMouseOver = (index: number) => {
+    setCount(index);
+  };
+
   return (
     <Form onSubmit={onSubmit}>
       <SearchInput
@@ -173,6 +174,7 @@ export const SearchPanel: FC<ISearchPanel> = ({ getDate }) => {
           {options.map((item, index) => {
             return (
               <Option
+                onMouseOver={() => handleMouseOver(index)}
                 active={index === count}
                 key={index}
                 onClick={() => setCity(item)}
