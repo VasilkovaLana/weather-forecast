@@ -9,8 +9,9 @@ import React, {
 } from 'react';
 import { debounce } from 'lodash';
 import { getDateListCities } from '../../services/weather-service';
+import { DropdownList } from '../dropdown-list/dropdown-list';
 
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 import loupe from './img/loupe.svg';
 
 const Form = styled.form`
@@ -62,46 +63,24 @@ const SearchButton = styled.button`
   }
 `;
 
-const fadeIn = keyframes`
-  to {
-    opacity: 1;
-  }
-`;
-
-const AutoContainer = styled.div`
-  position: absolute;
-  top: 34px;
-  width: -webkit-fill-available;
-  grid-column: 1/4;
-  background: #eceef2;
-  color: #9ba4b6;
-  font-weight: 400;
-  font-size: 16px;
-  opacity: 0;
-  animation: 0.5s ${fadeIn} 0.3s both;
-`;
-
-const Option = styled.p<{ active: boolean }>`
-  cursor: pointer;
-  font-family: Arial, sans-serif;
-  padding: 9px 0 12px 9px;
-  margin: 0;
-  background: ${(props) => (props.active ? '#cbd9f5' : '')};
-`;
-
 export const SearchPanel: FC<ISearchPanel> = ({ getDate }) => {
   const [display, setDisplay] = useState(false);
   const [submit, setSubmit] = useState(false);
   const [options, setOptions] = useState(['']);
   const [search, setSearch] = useState(localStorage.getItem('city') || '');
-  let [count, setCount] = useState(0);
+  let [count, setCount] = useState(-1);
   const focusTextInput = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    focusTextInput.current!.select();
+    setDisplay(false);
+  }, [submit]);
 
   const delayDebounce = useRef(
     debounce((searchText: string) => {
       if (searchText.trim().length === 0) {
         setDisplay(false);
-        setCount(0);
+        setCount(-1);
         return;
       }
 
@@ -121,11 +100,6 @@ export const SearchPanel: FC<ISearchPanel> = ({ getDate }) => {
     }
   };
 
-  useEffect(() => {
-    focusTextInput.current!.select();
-    setDisplay(false);
-  }, [submit]);
-
   const setCity = (city: string) => {
     getDate(city);
     setSearch(city);
@@ -137,7 +111,7 @@ export const SearchPanel: FC<ISearchPanel> = ({ getDate }) => {
     getDate(search.trim());
     focusTextInput.current!.select();
     setDisplay(false);
-    setCount(0);
+    setCount(-1);
   };
 
   const handleKeyDown = (e: KeyboardEvent) => {
@@ -170,20 +144,12 @@ export const SearchPanel: FC<ISearchPanel> = ({ getDate }) => {
       />
       <SearchButton type="submit" />
       {display && (
-        <AutoContainer>
-          {options.map((item, index) => {
-            return (
-              <Option
-                onMouseOver={() => handleMouseOver(index)}
-                active={index === count}
-                key={index}
-                onClick={() => setCity(item)}
-              >
-                {item}
-              </Option>
-            );
-          })}
-        </AutoContainer>
+        <DropdownList
+          setCity={setCity}
+          handleMouseOver={handleMouseOver}
+          options={options}
+          count={count}
+        />
       )}
     </Form>
   );
