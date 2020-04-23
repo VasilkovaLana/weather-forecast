@@ -63,18 +63,21 @@ const SearchButton = styled.button`
   }
 `;
 
-export const SearchPanel: FC<ISearchPanel> = ({ getDate }) => {
+export const SearchPanel: FC<ISearchPanel> = ({
+  wrapperSetIsSubmitting,
+  isSubmitting,
+  wrapperSetSearch,
+  search,
+}) => {
   const [display, setDisplay] = useState(false);
-  const [submit, setSubmit] = useState(false);
   const [options, setOptions] = useState(['']);
-  const [search, setSearch] = useState(localStorage.getItem('city') || '');
   let [count, setCount] = useState(-1);
   const focusTextInput = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     focusTextInput.current!.select();
     setDisplay(false);
-  }, [submit]);
+  }, [isSubmitting]);
 
   const delayDebounce = useRef(
     debounce((searchText: string) => {
@@ -96,21 +99,19 @@ export const SearchPanel: FC<ISearchPanel> = ({ getDate }) => {
     const pattern = /^[a-zA-Zа-яА-яёЁ\s-]*$/;
     if (pattern.test(e.target.value)) {
       delayDebounce(e.target.value);
-      setSearch(e.target.value);
+      wrapperSetSearch(e.target.value);
     }
   };
 
   const setCity = (city: string) => {
-    getDate(city);
-    setSearch(city);
-    setSubmit(!submit);
+    wrapperSetIsSubmitting();
+    wrapperSetSearch(city);
   };
 
   const onSubmit = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
-    getDate(search.trim());
-    focusTextInput.current!.select();
-    setDisplay(false);
+    wrapperSetSearch(search.trim());
+    wrapperSetIsSubmitting();
     setCount(-1);
   };
 
@@ -118,12 +119,12 @@ export const SearchPanel: FC<ISearchPanel> = ({ getDate }) => {
     if (display && e.key === 'ArrowDown' && count < options.length - 1) {
       e.preventDefault();
       setCount(++count);
-      setSearch(options[count]);
+      wrapperSetSearch(options[count]);
     }
     if (display && e.key === 'ArrowUp' && count > 0) {
       e.preventDefault();
       setCount(--count);
-      setSearch(options[count]);
+      wrapperSetSearch(options[count]);
     }
   };
 
@@ -156,5 +157,8 @@ export const SearchPanel: FC<ISearchPanel> = ({ getDate }) => {
 };
 
 interface ISearchPanel {
-  getDate: (value: string) => void;
+  wrapperSetSearch: (value: string) => void;
+  search: string;
+  wrapperSetIsSubmitting: () => void;
+  isSubmitting: boolean;
 }

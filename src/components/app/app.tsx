@@ -37,7 +37,9 @@ const App: FC = () => {
   const [loading, setUploading] = useState(false);
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  let [beginin, setBeginin] = useState(true);
+  const [beginin, setBeginin] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [search, setSearch] = useState(localStorage.getItem('city') || '');
 
   useEffect(() => {
     const lastCity: any = localStorage.getItem('city');
@@ -49,6 +51,26 @@ const App: FC = () => {
       .then((body) => onInfoLoaded(body))
       .catch((error) => onError(error));
   }, []);
+
+  useEffect(() => {
+    if (!search) return;
+    setUploading(true);
+
+    localStorage.setItem('city', search);
+    setBeginin(false);
+
+    getDateWeather(search)
+      .then((body) => onInfoLoaded(body))
+      .catch((error) => onError(error));
+  }, [isSubmitting]);
+
+  const wrapperSetSearch = (value: string): void => {
+    setSearch(value);
+  };
+
+  const wrapperSetIsSubmitting = () => {
+    setIsSubmitting(!isSubmitting);
+  };
 
   const onError = (error: { message: string }) => {
     setErrorMessage(error.message);
@@ -62,21 +84,14 @@ const App: FC = () => {
     setError(false);
   };
 
-  const getDate = (cityName: string): void => {
-    if (!cityName) return;
-    setUploading(true);
-
-    localStorage.setItem('city', cityName);
-    setBeginin(false);
-
-    getDateWeather(cityName)
-      .then((body) => onInfoLoaded(body))
-      .catch((error) => onError(error));
-  };
-
   return (
     <Wrapper beginin={beginin}>
-      <SearchPanel getDate={getDate} />
+      <SearchPanel
+        wrapperSetIsSubmitting={wrapperSetIsSubmitting}
+        isSubmitting={isSubmitting}
+        search={search}
+        wrapperSetSearch={wrapperSetSearch}
+      />
       <Content
         infoCity={infoCity}
         loading={loading}
