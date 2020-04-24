@@ -1,7 +1,7 @@
 const WeatherBase = 'https://api.openweathermap.org/data/2.5/weather?q=';
 const WeatherKey =
   '&lang=ru&units=metric&appid=0f49363de5af37c512e1a84dd3bab4dd';
-const ListCitiesBase = 'http://autocomplete.travelpayouts.com/places2?term=';
+const ListCitiesBase = 'https://autocomplete.travelpayouts.com/places2?term=';
 const QueryOption = '&locale=ru&types[]=city';
 
 const MaxLengthList = 5;
